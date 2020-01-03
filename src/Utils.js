@@ -51,3 +51,10 @@ export function editCustomer(customerData) {
         headers: {'content-type' : 'application/json'}
     })
 }
+
+export function getCustomer(customerNumber) {
+    return request({
+        url: BASE_URL + 'customers'+ "/"+customerNumber,
+        method: 'GET'
+    })
+}

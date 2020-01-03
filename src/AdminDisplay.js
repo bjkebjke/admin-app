@@ -187,7 +187,7 @@ class AdminDisplay extends Component {
                             return {
                             onClick: () => {
                                 this.setState({
-                                datum: this.state.data[rowIndex]
+                                datum: record
                                 });
                             } // click row
                             

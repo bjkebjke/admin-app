@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 
 import { Layout, Row, Col, Descriptions, Button, Modal } from 'antd';
 
-import {editCustomer} from './Utils.js';
+import {editCustomer, getCustomer} from './Utils.js';
 
 const { Header, Content, Sider, Footer } = Layout;
 
@@ -29,7 +29,27 @@ class DescriptionDisplay extends Component {
         this.setModalVisible = this.setModalVisible.bind(this);
         this.handleChanges = this.handleChanges.bind(this);
         this.handleSubmit = this.handleSubmit.bind(this);
+        this.getRecord = this.getRecord.bind(this);
 
+    }
+
+    getRecord(customerNumber) {
+        var data = getCustomer(customerNumber);
+
+        this.setState({
+            customerName: data.customerName,
+            contactLastName: data.contactLastName,
+            contactFirstName: data.contactFirstName,
+            phone: data.phone,
+            addressLine1: data.addressLine1,
+            addressLine2: data.addressLine2,
+            city: data.city,
+            state: data.state,
+            postalCode: data.postalCode,
+            country: data.country,
+            salesRepEmployeeNumber: data.salesRepEmployeeNumber,
+            creditLimit: data.creditLimit
+        })
     }
 
     setModalVisible(modalVisible) {
@@ -66,6 +86,12 @@ class DescriptionDisplay extends Component {
             console.log('error');
         } else {
             console.log('success');
+        }
+    }
+
+    componentDidMount() {
+        if(this.props.data != null) {
+            this.getRecord(this.props.data.customerNumber);
         }
     }
 

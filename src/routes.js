@@ -75,6 +75,19 @@
         );
     })
 
+    app.get('/customers/:customerNumber', function (req, res) {
+        var custNum = req.params.customerNumber;
+        var queryString = 'Select * from customers where customerNumber = ?'
+        con.query(queryString,[custNum], function(error, results) {
+                if(error) {
+                    throw error;
+                } else {
+                    res.send(results);
+                }
+            }
+        );
+    })
+
     app.get('/products', function (req, res) {
         var queryString = 'Select * from products'
         con.query(queryString, function(error, results) {
@@ -129,31 +142,44 @@
     app.use(bodyParser.json());
 
     app.post('/customers', function (req,res) {
-        var jsondata = req.body;
         //console.log(jsondata);
         //console.log("req.body customer name " + req.body.customerName);
+        
+        var queryString2 = 'Select customerNumber from customers order by customerNumber desc limit 1';
+        con.query(queryString2, function(error, results) {
+                if(error) {
+                    throw error;
+                } else {
+                    var jsondata = req.body;
+                    console.log("jsondata " + jsondata);
 
-        var values = [jsondata.customerName, jsondata.contactLastName,  
-            jsondata.contactFirstName, jsondata.phone, jsondata.addressLine1, jsondata.addressLine2,
-            jsondata.city, jsondata.state, jsondata.postalCode, jsondata.country, jsondata.salesRepEmployeeNumber,
-            jsondata.creditLimit];
-
-        //console.log(values);
-
-        var queryString = 'INSERT INTO customers (customerName, contactLastName,' +  
-        ' contactFirstName, phone, addressLine1, addressLine2, city, state, postalCode, country, salesRepEmployeeNumber, creditLimit)' + 
-        ' VALUES (?)'
-        con.query(queryString, [values], function(err, result) {
-            if(err) {
-                res.send('Error');
-            } else {
-                console.log(result);
-                console.log("Number of rows affected : " + result.affectedRows);
-                console.log("Number of records affected with warning : " + result.warningCount);
-                console.log("Message from MySQL Server : " + result.message);
-                res.send(result);
+                    var nextNumber = results[0].customerNumber + 1;
+                    var values = [nextNumber ,jsondata.customerName, jsondata.contactLastName,  
+                        jsondata.contactFirstName, jsondata.phone, jsondata.addressLine1, jsondata.addressLine2,
+                        jsondata.city, jsondata.state, jsondata.postalCode, jsondata.country, jsondata.salesRepEmployeeNumber,
+                        jsondata.creditLimit];
+            
+                    console.log(values);
+            
+                    var queryString = 'INSERT INTO customers (customerNumber, customerName, contactLastName,' +  
+                    ' contactFirstName, phone, addressLine1, addressLine2, city, state, postalCode, country, salesRepEmployeeNumber, creditLimit)' + 
+                    ' VALUES (?)'
+                    con.query(queryString, [values], function(err, result) {
+                        console.log("hello");
+                        if(err) {
+                            console.log("error "+ err);
+                            res.send('Error');
+                        } else {
+                            console.log(result);
+                            console.log("Number of rows affected : " + result.affectedRows);
+                            console.log("Number of records affected with warning : " + result.warningCount);
+                            console.log("Message from MySQL Server : " + result.message);
+                            res.send(result);
+                        }
+                    });
+                }
             }
-        })
+        );
 
     })
 
